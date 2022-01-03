@@ -25,8 +25,8 @@ plotFunction func = map (\x -> (x, func x))
 plotError :: IntParametrizedFunc  -> Double -> Int -> [Int] -> [(Int, Double)]
 plotError f x param i = zip i (numericalError f x param i)
 
-buttonScript :: Monad m => HtmlT m ()
-buttonScript = script_ [src_ "buttons.js"] $ toHtml("" :: String)
+logLogScript :: Monad m => HtmlT m ()
+logLogScript = script_ [src_ "loglog.js"] $ toHtml("" :: String)
 
 main :: IO ()
 main =
@@ -35,7 +35,8 @@ main =
         computed_bessel = plotFunction (besselJ0 num_steps) [0.0, 0.001 .. 11]
         roots = map (uncurry $ findRootOfFuncMiddlePointMethod (besselJ0 num_steps) 1e-12) [(2, 4), (5, 6), (8, 10)]
         rootsSecant = map (uncurry $ findRootOfFuncSecantMethod (besselJ0 num_steps) 2000 1e-7) [(2, 3), (5, 6), (8, 9)]
-        errorTrace = Graphics.Plotly.line (aes & x .~ fst & y .~ snd) (plotError besselJ0 1 perfect_steps [2^n | n <- [2..13]])
+        errorTrace = Graphics.Plotly.line (aes & x .~ fst & y .~ snd) (plotError besselJ0 (head roots) perfect_steps [2^n | n <- [2..13]])
+        
     in do
     toFile def "bessel.png" $ do
         layout_title .= "Bessel function (4096 integration steps)"
@@ -50,9 +51,9 @@ main =
         
     T.writeFile "errors.html" $ renderText $ doctypehtml_ $ do
         head_ $ do meta_ [charset_ "utf-8"]
-                   buttonScript
+                   logLogScript
                    plotlyCDN
         body_ $ toHtml $ plotly "errorPlotDiv" [errorTrace]  
-                    & layout . margin ?~ thinMargins
+                    & layout . title ?~ "J_0(0) error |N steps - 16384 steps|"
                     & layout . xaxis . _Just . axistype ?~ Log
                     & layout . yaxis . _Just . axistype ?~ Log
