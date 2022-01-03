@@ -1,4 +1,4 @@
-module Bessel (besselJ0, IntParametrizedFunc) where
+module Bessel (besselJ0) where
     
 import Utils
 
