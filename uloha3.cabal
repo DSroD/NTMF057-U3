@@ -35,6 +35,10 @@ executable uloha3
         Chart ^>= 1.9.3,
         Chart-cairo ^>= 1.9.3,
         transformers ^>= 0.5.6.2,
+        plotlyhs ^>= 0.2.1,
+        lucid ^>= 2.11.0,
+        text ^>= 1.2.4.1,
+        bytestring ^>= 0.10.12.0,
 
     hs-source-dirs:   app
     default-language: Haskell2010
